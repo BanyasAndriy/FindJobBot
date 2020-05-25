@@ -1,20 +1,19 @@
-package ua.kiev.prog.service;
+package finder.service;
 
+import finder.model.User;
+import finder.repo.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.kiev.prog.model.User;
-import ua.kiev.prog.repo.UserRepository;
 
 import java.util.List;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Transactional(readOnly = true)
     public User findByChatId(long id) {
@@ -26,15 +25,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    @Transactional
-    public List<User> findNewUsers() {
-        List<User> users = userRepository.findNewUsers();
 
-        users.forEach((user) -> user.setNotified(true));
-        userRepository.saveAll(users);
-
-        return users;
-    }
 
     @Transactional
     public void addUser(User user) {

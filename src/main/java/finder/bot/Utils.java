@@ -1,4 +1,4 @@
-package ua.kiev.prog.bot;
+package finder.bot;
 
 import org.apache.commons.validator.EmailValidator;
 

@@ -1,5 +1,6 @@
-package ua.kiev.prog.bot;
+package finder.bot;
 
+import finder.model.User;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +11,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ua.kiev.prog.model.User;
-import ua.kiev.prog.service.UserService;
+import finder.service.UserService;
 
 import java.io.InputStream;
-import java.util.List;
 
 @Component
 @PropertySource("classpath:telegram.properties")
@@ -24,6 +23,7 @@ public class ChatBot extends TelegramLongPollingBot {
 
     private static final String BROADCAST = "broadcast ";
     private static final String LIST_USERS = "users";
+    private static final String HELP = "/help";
 
     @Value("${bot.name}")
     private String botName;
@@ -70,7 +70,7 @@ public class ChatBot extends TelegramLongPollingBot {
             userService.addUser(user);
 
             context = BotContext.of(this, user, text);
-            state.enter(context);
+            state.enter(context,userService);
 
             LOGGER.info("New user registered: " + chatId);
         } else {
@@ -80,11 +80,16 @@ public class ChatBot extends TelegramLongPollingBot {
             LOGGER.info("Update received for user in state: " + state);
         }
 
-        state.handleInput(context);
+        state.handleInput(context,userService);
 
         do {
-            state = state.nextState();
-            state.enter(context);
+            state = state.nextState(context);
+           /* userService.updateUser(user);*/
+         try {
+             state.enter(context,userService);
+         }catch (NullPointerException n) {
+             System.out.println("Its just finish!");
+         }
         } while (!state.isInputNeeded());
 
         user.setStateId(state.ordinal());
@@ -92,23 +97,29 @@ public class ChatBot extends TelegramLongPollingBot {
     }
 
     private boolean checkIfAdminCommand(User user, String text) {
-        if (user == null || !user.getAdmin())
+        if (user == null)
             return false;
 
-        if (text.startsWith(BROADCAST)) {
-            LOGGER.info("Admin command received: " + BROADCAST);
+        if (user.getAdmin()) {
+            if (text.startsWith(BROADCAST)) {
+                LOGGER.info("Admin command received: " + BROADCAST);
 
-            text = text.substring(BROADCAST.length());
-            broadcast(text);
+                text = text.substring(BROADCAST.length());
+               /* broadcast(text);*/
 
-            return true;
-        } else if (text.equals(LIST_USERS)) {
-            LOGGER.info("Admin command received: " + LIST_USERS);
+                return true;
+            } else if (text.equals(LIST_USERS)) {
+                LOGGER.info("Admin command received: " + LIST_USERS);
 
-            listUsers(user);
-            return true;
+                /*  listUsers(user);*/
+                return true;
+            } else {
+                if (text.startsWith("/help")) {
+                    sendMessage(user.getChatId(), " Я допоможу тобі, а може і ні!");
+                    return true;
+                }
+            }
         }
-
         return false;
     }
 
@@ -137,7 +148,7 @@ public class ChatBot extends TelegramLongPollingBot {
         }
     }
 
-    private void listUsers(User admin) {
+   /* private void listUsers(User admin) {
         StringBuilder sb = new StringBuilder("All users list:\r\n");
         List<User> users = userService.findAllUsers();
 
@@ -155,10 +166,10 @@ public class ChatBot extends TelegramLongPollingBot {
 
         sendPhoto(admin.getChatId());
         sendMessage(admin.getChatId(), sb.toString());
-    }
+    }*/
 
-    private void broadcast(String text) {
+   /* private void broadcast(String text) {
         List<User> users = userService.findAllUsers();
         users.forEach(user -> sendMessage(user.getChatId(), text));
-    }
+    }*/
 }

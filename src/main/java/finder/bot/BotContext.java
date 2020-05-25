@@ -1,11 +1,13 @@
-package ua.kiev.prog.bot;
+package finder.bot;
 
-import ua.kiev.prog.model.User;
+
+import finder.model.User;
+
 
 public class BotContext {
-    private final ChatBot bot;
-    private final User user;
-    private final String input;
+    private ChatBot bot;
+    private User user;
+    private String input;
 
     public static BotContext of(ChatBot bot, User user, String text) {
         return new BotContext(bot, user, text);
@@ -28,4 +30,6 @@ public class BotContext {
     public String getInput() {
         return input;
     }
+
+
 }
