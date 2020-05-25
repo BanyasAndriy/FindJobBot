@@ -24,6 +24,8 @@ public class ChatBot extends TelegramLongPollingBot {
     private static final String BROADCAST = "broadcast ";
     private static final String LIST_USERS = "users";
     private static final String HELP = "/help";
+    private static final String START = "/start";
+
 
     @Value("${bot.name}")
     private String botName;
@@ -74,9 +76,13 @@ public class ChatBot extends TelegramLongPollingBot {
 
             LOGGER.info("New user registered: " + chatId);
         } else {
-            context = BotContext.of(this, user, text);
-            state = BotState.byId(user.getStateId());
-
+            if (text.equals("/start")){
+                context = BotContext.of(this, user, text);
+                state = BotState.byId(0);
+            }else {
+                context = BotContext.of(this, user, text);
+                state = BotState.byId(user.getStateId());
+            }
             LOGGER.info("Update received for user in state: " + state);
         }
 
@@ -114,8 +120,9 @@ public class ChatBot extends TelegramLongPollingBot {
                 /*  listUsers(user);*/
                 return true;
             } else {
-                if (text.startsWith("/help")) {
+                if (text.startsWith("/start")) {
                     sendMessage(user.getChatId(), " Я допоможу тобі, а може і ні!");
+
                     return true;
                 }
             }

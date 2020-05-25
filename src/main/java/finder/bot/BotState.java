@@ -15,9 +15,10 @@ public enum BotState {
 
     Start {
         @Override
-        public void enter(BotContext context,UserService userService) {
-            sendMessage(context, "Привіт.Я допоможу знайти тобі підходящу вакансію. ");
+        public void enter(BotContext context, UserService userService) {
+            sendMessage(context, "Привіт.Я допоможу знайти тобі підходящу вакансію.\nДля продовження введіть 'ок' ");
         }
+
 
         @Override
         public BotState nextState(BotContext context) {
@@ -81,16 +82,18 @@ public enum BotState {
         private BotState next;
 
         @Override
-        public void handleInput(BotContext context,UserService userService) {
+        public void handleInput(BotContext context, UserService userService) {
             sendMessage(context, "Почекайте хвилинку! Запрос опрацьовується !");
             User user = context.getUser();
 
-            List<Vacancy> vacancyList = Jobs.getJobsFromDou("", "");
+            List<Vacancy> vacancyList = new ArrayList<>();
+            vacancyList.addAll(Jobs.getJobsFromDou("", ""));
+            vacancyList.addAll(Jobs.getJobsFromWorkUa("", ""));
             vacancyList.forEach(vacancy -> vacancy.addUser(user));
             user.setVacancyList(vacancyList);
-userService.updateUser(user);
+            userService.updateUser(user);
             if (vacancyList.isEmpty()) {
-                sendMessage(context, "На даний момент вільних вакансій немає!");
+                sendMessage(context, "На даний момент вільних вакансій немає!\nЯк тільки появляться нові вакансії ми вас повідомимо!");
             } else {
                 for (Vacancy vacancy : vacancyList
                 ) {
@@ -98,7 +101,6 @@ userService.updateUser(user);
                     System.out.println("Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                 }
             }
-
         }
 
 
@@ -138,7 +140,7 @@ userService.updateUser(user);
 
     Approved(false) {
         @Override
-        public void enter(BotContext context,UserService userService) {
+        public void enter(BotContext context, UserService userService) {
             sendMessage(context, "Дякуємо,що скористувались нашим ботом!" +
                     "Як тільки з'являться нові вакансії ми ваc повідомимо!");
         }
@@ -150,27 +152,34 @@ userService.updateUser(user);
     },
     Finish {
         @Override
-        public void enter(BotContext context,UserService userService) {
+        public void enter(BotContext context, UserService userService) {
             User user = context.getUser();
-            sendMessage(context, "Нова вакансія!");
+
             while (true) {
+
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(3600000);
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                List<Vacancy> vacancyList = Jobs.getJobsFromDou("", "");
-                user.setVacancyList(vacancyList);
-                userService.updateUser(user);
+                List<Vacancy> vacancyList = new ArrayList<>();
+                vacancyList.addAll(Jobs.getOnlyNewVacancy(Jobs.getJobsFromDou("", ""), user));
+                vacancyList.addAll(Jobs.getOnlyNewVacancy(Jobs.getJobsFromWorkUa("", ""), user));
+                if (!vacancyList.isEmpty()) {
+                    user.setVacancyList(vacancyList);
+                    userService.updateUser(user);
+                }
 
-                if (vacancyList.isEmpty()) {
-                    sendMessage(context, "На даний момент вільних вакансій немає!");
-                } else {
+                if (!vacancyList.isEmpty()) {
+                    sendMessage(context, "Нова вакансія!");
                     for (Vacancy vacancy : vacancyList
                     ) {
                         sendMessage(context, "Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                         System.out.println("Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                     }
+                }else {
+                    sendMessage(context, "Протягом години нові вакансії не появились!");
                 }
             }
         }
@@ -215,19 +224,19 @@ userService.updateUser(user);
         return inputNeeded;
     }
 
-    public void handleInput(BotContext context,UserService userService) {
+    public void handleInput(BotContext context, UserService userService) {
         // do nothing by default
     }
 
 
-    public void enter(BotContext context,UserService userService) {
+    public void enter(BotContext context, UserService userService) {
         // do nothing by default
 
     }
 
-/*    public  BotState nextState(){
-        return null;
-    };*/
+    /*    public  BotState nextState(){
+            return null;
+        };*/
 //need to override
     public BotState nextState(BotContext context) {
         return null;

@@ -1,5 +1,6 @@
 package finder.utils;
 
+import finder.model.User;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,10 +14,12 @@ import java.util.List;
 public class Jobs {
 
 
-    public static List<Vacancy> getJobsFromWorkUa(String vacancy, String city)  {
+    public static List<Vacancy> getJobsFromWorkUa(String vacancy, String city) {
 
         List<Vacancy> vacancies = new ArrayList<>();
-        String url = "https://www.work.ua/ru/jobs-" + city.toLowerCase() + "-" + vacancy.toLowerCase().replaceAll(" ", "+") + "/";;
+       // String url = "https://www.work.ua/ru/jobs-" + city.toLowerCase() + "-" + vacancy.toLowerCase().replaceAll(" ", "+") + "/";
+        String url = "https://www.work.ua/ru/jobs-kyiv-junior-java-developer/";
+
 
         Document document = null;
         try {
@@ -33,11 +36,13 @@ public class Jobs {
                 Element urlElement = el.child(0);
                 String vacancyUrl = urlElement.child(0).attr("href");
                 String name = urlElement.child(0).attr("title");
+                if (name.toLowerCase().contains("junior"))
                 vacancies.add(new Vacancy("https://www.work.ua" + vacancyUrl, name));
             } else {
                 Element urlElement = el.child(1);
                 String vacancyUrl = urlElement.child(0).attr("href");
                 String name = urlElement.child(0).attr("title");
+                if (name.toLowerCase().contains("junior"))
                 vacancies.add(new Vacancy("https://www.work.ua" + vacancyUrl, name));
             }
         });
@@ -74,7 +79,18 @@ public class Jobs {
         return vacancies;
     }
 
+    public static List<Vacancy> getOnlyNewVacancy(List<Vacancy> allVacancy, User user) {
+        List<Vacancy> savedVacancy = user.getVacancyList();
+        List<Vacancy> newVacancy = new ArrayList<>();
 
+
+        for (Vacancy vacancy : allVacancy) {
+            if (!savedVacancy.contains(vacancy)) {
+                newVacancy.add(vacancy);
+            }
+        }
+        return newVacancy;
+    }
 
 
 }
