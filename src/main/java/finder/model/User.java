@@ -1,22 +1,23 @@
-package ua.kiev.prog.model;
+package finder.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.*;
 
 @Entity
+@Table(name = "customUser")
 public class User {
     @Id
     @GeneratedValue
     private Long id;
-
     private Long chatId;
     private Integer stateId;
-    private String phone;
-    private String email;
+    private Boolean isNewUser=true;
     private Boolean admin;
     private Boolean notified = false;
-    private String name;
+
+    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    List<Vacancy> vacancyList = new ArrayList<>();
+
 
     public User() {
     }
@@ -24,6 +25,7 @@ public class User {
     public User(Long chatId, Integer state) {
         this.chatId = chatId;
         this.stateId = state;
+
     }
 
     public User(Long chatId, Integer stateId, Boolean admin) {
@@ -33,13 +35,9 @@ public class User {
     }
 
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+
+
 
     public Long getId() {
         return id;
@@ -65,20 +63,29 @@ public class User {
         this.stateId = stateId;
     }
 
-    public String getPhone() {
-        return phone;
+
+    public Boolean getIsNewUser() {
+        return isNewUser;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setIsNewUser(Boolean newUser) {
+        isNewUser = newUser;
     }
 
-    public String getEmail() {
-        return email;
+    public Boolean getNewUser() {
+        return isNewUser;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNewUser(Boolean newUser) {
+        isNewUser = newUser;
+    }
+
+    public List<Vacancy> getVacancyList() {
+        return vacancyList;
+    }
+
+    public void setVacancyList(List<Vacancy> vacancyList) {
+        this.vacancyList=vacancyList;
     }
 
     public Boolean getAdmin() {
@@ -95,5 +102,22 @@ public class User {
 
     public void setNotified(Boolean notified) {
         this.notified = notified;
+    }
+
+    public void addToVacancyList(List<Vacancy> vacancyList) {
+        this.vacancyList.addAll(vacancyList);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equals(getChatId(), user.getChatId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getChatId());
     }
 }
