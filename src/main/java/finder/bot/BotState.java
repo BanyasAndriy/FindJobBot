@@ -158,7 +158,7 @@ public enum BotState {
             while (true) {
 
                 try {
-                    Thread.sleep(60000);
+                    Thread.sleep(120000);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
