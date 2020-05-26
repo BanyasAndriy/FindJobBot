@@ -3,6 +3,7 @@ package finder.bot;
 import finder.model.User;
 import finder.utils.Jobs;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import finder.model.Vacancy;
@@ -158,12 +159,9 @@ public enum BotState {
         @Override
         public void enter(BotContext context, UserService userService) {
             User user = context.getUser();
-
-            while (true) {
-
+            while (true){
                 try {
-                    Thread.sleep(1440000);
-
+                    Thread.sleep(600000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -187,9 +185,13 @@ public enum BotState {
                     }
                 }else {
                     sendMessage(context, "Протягом години нові вакансії не появились!");
-                }
-            }
+                }}
+
         }
+   /*     @Override
+        public BotState nextState(BotContext botContext) {
+            return Finish;
+        }*/
     };
 
 
