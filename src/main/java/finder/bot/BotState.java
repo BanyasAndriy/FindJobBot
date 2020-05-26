@@ -2,6 +2,7 @@ package finder.bot;
 
 import finder.model.User;
 import finder.utils.Jobs;
+
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import finder.model.Vacancy;
@@ -16,13 +17,13 @@ public enum BotState {
     Start {
         @Override
         public void enter(BotContext context, UserService userService) {
-            sendMessage(context, "Привіт.Я допоможу знайти тобі підходящу вакансію.\nДля продовження введіть 'ок' ");
+            sendMessage(context, "Привіт.Я допоможу знайти вакансії Junior Java Developer в Києві.\nДля продовження введіть 'ок' ");
         }
 
 
         @Override
         public BotState nextState(BotContext context) {
-            User user = context.getUser();
+
             if (context.getUser().getIsNewUser()) {
                 context.getUser().setIsNewUser(false);
                 return FindVacancy;
@@ -89,6 +90,9 @@ public enum BotState {
             List<Vacancy> vacancyList = new ArrayList<>();
             vacancyList.addAll(Jobs.getJobsFromDou("", ""));
             vacancyList.addAll(Jobs.getJobsFromWorkUa("", ""));
+            vacancyList.addAll(Jobs.getJobsFromRobotaUa("",""));
+            vacancyList.addAll(Jobs.getJobsFromDjinni("",""));
+
             vacancyList.forEach(vacancy -> vacancy.addUser(user));
             user.setVacancyList(vacancyList);
             userService.updateUser(user);
@@ -166,6 +170,9 @@ public enum BotState {
                 List<Vacancy> vacancyList = new ArrayList<>();
                 vacancyList.addAll(Jobs.getOnlyNewVacancy(Jobs.getJobsFromDou("", ""), user));
                 vacancyList.addAll(Jobs.getOnlyNewVacancy(Jobs.getJobsFromWorkUa("", ""), user));
+                vacancyList.addAll(Jobs.getOnlyNewVacancy(Jobs.getJobsFromRobotaUa("", ""), user));
+                vacancyList.addAll(Jobs.getOnlyNewVacancy(Jobs.getJobsFromDjinni("", ""), user));
+
                 if (!vacancyList.isEmpty()) {
                     user.setVacancyList(vacancyList);
                     userService.updateUser(user);
