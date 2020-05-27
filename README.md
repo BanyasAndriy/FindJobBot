@@ -7,3 +7,6 @@ At startup, the bot sends me all current vacancies. After that, it checks the ab
 
 Stack of technologies I used:
 Java Core,Spring Boot,Spring Data Jpa,PostgreSql,Telegram API,Maven 
+
+You can find the bot in the telegram:
+@FindJobForYourselfBot
