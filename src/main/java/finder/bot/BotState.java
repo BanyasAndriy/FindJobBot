@@ -3,7 +3,6 @@ package finder.bot;
 import finder.model.User;
 import finder.utils.Jobs;
 
-import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import finder.model.Vacancy;
@@ -88,11 +87,7 @@ public enum BotState {
             sendMessage(context, "Почекайте хвилинку! Запрос опрацьовується !");
             User user = context.getUser();
 
-            List<Vacancy> vacancyList = new ArrayList<>();
-            vacancyList.addAll(Jobs.getJobsFromDou("", ""));
-            vacancyList.addAll(Jobs.getJobsFromWorkUa("", ""));
-            vacancyList.addAll(Jobs.getJobsFromRobotaUa("",""));
-            vacancyList.addAll(Jobs.getJobsFromDjinni("",""));
+            List<Vacancy> vacancyList = Jobs.getAllVacancies();
 
             vacancyList.forEach(vacancy -> vacancy.addUser(user));
             user.setVacancyList(vacancyList);
@@ -159,9 +154,9 @@ public enum BotState {
         @Override
         public void enter(BotContext context, UserService userService) {
             User user = context.getUser();
-            while (true){
+            while (true) {
                 try {
-                    Thread.sleep(600000);
+                    Thread.sleep(1_800_000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -183,15 +178,11 @@ public enum BotState {
                         sendMessage(context, "Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                         System.out.println("Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                     }
-                }else {
+                } else {
                     sendMessage(context, "Протягом години нові вакансії не появились!");
-                }}
-
+                }
+            }
         }
-   /*     @Override
-        public BotState nextState(BotContext botContext) {
-            return Finish;
-        }*/
     };
 
 
@@ -237,16 +228,11 @@ public enum BotState {
         // do nothing by default
     }
 
-
     public void enter(BotContext context, UserService userService) {
         // do nothing by default
-
     }
 
-    /*    public  BotState nextState(){
-            return null;
-        };*/
-//need to override
+    //need to override
     public BotState nextState(BotContext context) {
         return null;
     }

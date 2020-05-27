@@ -72,13 +72,6 @@ public class User {
         isNewUser = newUser;
     }
 
-    public Boolean getNewUser() {
-        return isNewUser;
-    }
-
-    public void setNewUser(Boolean newUser) {
-        isNewUser = newUser;
-    }
 
     public List<Vacancy> getVacancyList() {
         return vacancyList;
@@ -120,4 +113,6 @@ public class User {
     public int hashCode() {
         return Objects.hash(getChatId());
     }
+
+
 }

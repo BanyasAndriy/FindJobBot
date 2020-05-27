@@ -4,10 +4,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
-//this controller was created to  H10 error
+//this controller was created to avoid  H10 error on heroku
 @Controller
 public class BotController {
-
 
     @RequestMapping("https://findjobbot.herokuapp.com/")
     public String getMain(){

@@ -21,11 +21,6 @@ public class UserService {
         return userRepository.findByChatId(id);
     }
 
-    @Transactional(readOnly = true)
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
-    }
-
 
 
     @Transactional
