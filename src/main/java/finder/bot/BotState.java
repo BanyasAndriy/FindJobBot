@@ -178,6 +178,7 @@ public enum BotState {
                         sendMessage(context, "Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                         System.out.println("Позиція : " + vacancy.getName() + "\nСилка на ваканцію : " + vacancy.getUrl());
                     }
+                    vacancyList.clear();
                 } else {
                     sendMessage(context, "Протягом години нові вакансії не появились!");
                 }
