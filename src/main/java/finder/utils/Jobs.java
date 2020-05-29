@@ -27,13 +27,15 @@ public class Jobs {
                 Element urlElement = el.child(0);
                 String vacancyUrl = urlElement.child(0).attr("href");
                 String name = urlElement.child(0).attr("title");
-                if (name.toLowerCase().contains("junior"))
+                if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java")
+                        && (!name.toLowerCase().contains("javascript") ||!name.toLowerCase().contains("java script")))
                     vacancies.add(new Vacancy("https://www.work.ua" + vacancyUrl, name));
             } else {
                 Element urlElement = el.child(1);
                 String vacancyUrl = urlElement.child(0).attr("href");
                 String name = urlElement.child(0).attr("title");
-                if (name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee"))
+                if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java")
+                        && (!name.toLowerCase().contains("javascript") ||!name.toLowerCase().contains("java script")))
                     vacancies.add(new Vacancy("https://www.work.ua" + vacancyUrl, name));
             }
         });
@@ -54,6 +56,8 @@ public class Jobs {
             Element urlElement = el.child(0);
             String vacancyUrl = urlElement.child(0).attr("href");
             String name = urlElement.child(0).html();
+            if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java")
+                    && (!name.toLowerCase().contains("javascript") ||!name.toLowerCase().contains("java script")))
             vacancies.add(new Vacancy(vacancyUrl, name));
 
         });
@@ -77,7 +81,8 @@ public class Jobs {
 
             String vacancyUrl = vacancyTitle.child(0).attr("href");
             String name = vacancyTitle.child(0).attr("title");
-            if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java"))
+            if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java")
+                    && (!name.toLowerCase().contains("javascript") ||!name.toLowerCase().contains("java script")))
                 vacancies.add(new Vacancy("https://robota.ua" + vacancyUrl, name));
 
         });
@@ -100,7 +105,8 @@ public class Jobs {
             String name = article.child(0).child(0).html();
             String vacancyUrl = article.child(0).child(0).attr("href");
 
-            if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java"))
+            if ((name.toLowerCase().contains("junior") || name.toLowerCase().contains("trainee")) && name.toLowerCase().contains("java")
+                    && (!name.toLowerCase().contains("javascript") ||!name.toLowerCase().contains("java script")))
                 vacancies.add(new Vacancy("https://djinni.co/" + vacancyUrl, name));
 
         });
