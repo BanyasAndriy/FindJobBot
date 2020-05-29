@@ -78,7 +78,7 @@ public class User {
     }
 
     public void setVacancyList(List<Vacancy> vacancyList) {
-        this.vacancyList=vacancyList;
+        this.vacancyList.addAll(vacancyList);
     }
 
     public Boolean getAdmin() {
